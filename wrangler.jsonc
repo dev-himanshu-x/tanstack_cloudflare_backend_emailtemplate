@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tanstack-start-app",
+  "compatibility_date": "2025-09-02",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry",
+  "observability": {
+    "enabled": true,
+  },
+  "r2_buckets": [
+    {
+      "binding": "MY_BUCKET",
+      "bucket_name": "hostel-data",
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "r2bucketlist",
+      "database_id": "ee6ee420-5730-4be7-a258-52cc29fb54ea"
+    }
+  ]
+}
