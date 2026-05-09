@@ -1,4 +1,5 @@
-import 'dotenv/config';
-import { drizzle } from 'drizzle-orm/libsql';
+import { drizzle } from 'drizzle-orm/d1';
+import * as schema from './db/schema';
+import { env } from 'cloudflare:workers';
 
-const db = drizzle(process.env.DB_FILE_NAME!);
+export const db = drizzle(env.DB, { schema });

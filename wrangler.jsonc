@@ -11,6 +11,7 @@
     {
       "binding": "MY_BUCKET",
       "bucket_name": "hostel-data",
+      "remote": true
     }
   ],
   "d1_databases": [
@@ -19,5 +20,20 @@
       "database_name": "r2bucketlist",
       "database_id": "ee6ee420-5730-4be7-a258-52cc29fb54ea"
     }
-  ]
+  ],
+  "queues": {
+    "producers": [
+      {
+        "binding": "CSV_QUEUE",
+        "queue": "csv-processor"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "csv-processor",
+        "max_batch_size": 10,
+        "max_batch_timeout": 30
+      }
+    ]
+  }
 }
