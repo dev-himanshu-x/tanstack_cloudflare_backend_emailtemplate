@@ -1,0 +1,11 @@
+Sno,Name,hostel_name,Seater,Email,floor,room_number
+1,Pranjal Maurya,Block A,1,pranjalmaurya01@gmail.com,2,101
+2,Himanshu Singh,Block B,2,himanshu@test.com,1,202
+3,Rahul Verma,Block C,3,rahul.verma@test.com,3,305
+4,Ankit Sharma,Block A,1,ankit.sharma@test.com,2,104
+5,Pooja Gupta,Block D,2,pooja.gupta@test.com,1,201
+6,Sneha Yadav,Block B,1,sneha.yadav@test.com,4,401
+7,Vikas Tiwari,Block C,2,vikas.tiwari@test.com,2,203
+8,Neha Joshi,Block A,3,neha.joshi@test.com,3,302
+9,Amit Dubey,Block D,1,amit.dubey@test.com,1,102
+10,Riya Pandey,Block B,2,riya.pandey@test.com,2,205

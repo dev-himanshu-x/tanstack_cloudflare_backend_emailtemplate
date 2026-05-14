@@ -12,9 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiIndexRouteImport } from './routes/api/index'
 import { Route as ApiUploadRouteImport } from './routes/api/upload'
-import { Route as ApiRecordsIdRouteImport } from './routes/api/records.$id'
-import { Route as ApiProgressIdRouteImport } from './routes/api/progress.$id'
-import { Route as ApiProcessIdRouteImport } from './routes/api/process.$id'
+import { Route as ApiRecordsRouteImport } from './routes/api/records'
+import { Route as ApiProgressRouteImport } from './routes/api/progress'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,81 +30,59 @@ const ApiUploadRoute = ApiUploadRouteImport.update({
   path: '/api/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiRecordsIdRoute = ApiRecordsIdRouteImport.update({
-  id: '/api/records/$id',
-  path: '/api/records/$id',
+const ApiRecordsRoute = ApiRecordsRouteImport.update({
+  id: '/api/records',
+  path: '/api/records',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiProgressIdRoute = ApiProgressIdRouteImport.update({
-  id: '/api/progress/$id',
-  path: '/api/progress/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiProcessIdRoute = ApiProcessIdRouteImport.update({
-  id: '/api/process/$id',
-  path: '/api/process/$id',
+const ApiProgressRoute = ApiProgressRouteImport.update({
+  id: '/api/progress',
+  path: '/api/progress',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/progress': typeof ApiProgressRoute
+  '/api/records': typeof ApiRecordsRoute
   '/api/upload': typeof ApiUploadRoute
   '/api/': typeof ApiIndexRoute
-  '/api/process/$id': typeof ApiProcessIdRoute
-  '/api/progress/$id': typeof ApiProgressIdRoute
-  '/api/records/$id': typeof ApiRecordsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/progress': typeof ApiProgressRoute
+  '/api/records': typeof ApiRecordsRoute
   '/api/upload': typeof ApiUploadRoute
   '/api': typeof ApiIndexRoute
-  '/api/process/$id': typeof ApiProcessIdRoute
-  '/api/progress/$id': typeof ApiProgressIdRoute
-  '/api/records/$id': typeof ApiRecordsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/progress': typeof ApiProgressRoute
+  '/api/records': typeof ApiRecordsRoute
   '/api/upload': typeof ApiUploadRoute
   '/api/': typeof ApiIndexRoute
-  '/api/process/$id': typeof ApiProcessIdRoute
-  '/api/progress/$id': typeof ApiProgressIdRoute
-  '/api/records/$id': typeof ApiRecordsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/api/upload'
-    | '/api/'
-    | '/api/process/$id'
-    | '/api/progress/$id'
-    | '/api/records/$id'
+  fullPaths: '/' | '/api/progress' | '/api/records' | '/api/upload' | '/api/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/api/upload'
-    | '/api'
-    | '/api/process/$id'
-    | '/api/progress/$id'
-    | '/api/records/$id'
+  to: '/' | '/api/progress' | '/api/records' | '/api/upload' | '/api'
   id:
     | '__root__'
     | '/'
+    | '/api/progress'
+    | '/api/records'
     | '/api/upload'
     | '/api/'
-    | '/api/process/$id'
-    | '/api/progress/$id'
-    | '/api/records/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiProgressRoute: typeof ApiProgressRoute
+  ApiRecordsRoute: typeof ApiRecordsRoute
   ApiUploadRoute: typeof ApiUploadRoute
   ApiIndexRoute: typeof ApiIndexRoute
-  ApiProcessIdRoute: typeof ApiProcessIdRoute
-  ApiProgressIdRoute: typeof ApiProgressIdRoute
-  ApiRecordsIdRoute: typeof ApiRecordsIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -131,25 +108,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/records/$id': {
-      id: '/api/records/$id'
-      path: '/api/records/$id'
-      fullPath: '/api/records/$id'
-      preLoaderRoute: typeof ApiRecordsIdRouteImport
+    '/api/records': {
+      id: '/api/records'
+      path: '/api/records'
+      fullPath: '/api/records'
+      preLoaderRoute: typeof ApiRecordsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/progress/$id': {
-      id: '/api/progress/$id'
-      path: '/api/progress/$id'
-      fullPath: '/api/progress/$id'
-      preLoaderRoute: typeof ApiProgressIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/process/$id': {
-      id: '/api/process/$id'
-      path: '/api/process/$id'
-      fullPath: '/api/process/$id'
-      preLoaderRoute: typeof ApiProcessIdRouteImport
+    '/api/progress': {
+      id: '/api/progress'
+      path: '/api/progress'
+      fullPath: '/api/progress'
+      preLoaderRoute: typeof ApiProgressRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -157,11 +127,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiProgressRoute: ApiProgressRoute,
+  ApiRecordsRoute: ApiRecordsRoute,
   ApiUploadRoute: ApiUploadRoute,
   ApiIndexRoute: ApiIndexRoute,
-  ApiProcessIdRoute: ApiProcessIdRoute,
-  ApiProgressIdRoute: ApiProgressIdRoute,
-  ApiRecordsIdRoute: ApiRecordsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
