@@ -1,13 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, sqliteTable ,text } from "drizzle-orm/sqlite-core";
-
-type Data = {
-	name: string;
-	hostel_name: string;
-  floor:number;
-  seater:number;
-  room_number:number;
-};
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 
 export const uploads = sqliteTable('csv_uploads',{
@@ -21,8 +13,10 @@ export const uploads = sqliteTable('csv_uploads',{
 export const records = sqliteTable('csv_records', {
   id: integer("id").primaryKey({ autoIncrement: true }),
   csvId: integer("csv_id").notNull().references(()=> uploads.id),
-  email: text("email").notNull(),
-  data: text("data", { mode: 'json' }).$type<Data>().notNull(),
+  Name:text("Name").notNull(),
+  dial_code: integer("dial_code").notNull(),
+  phone_number:integer("phone_number").notNull()
+  //data: text("data", { mode: 'json' }).$type<Data>().notNull(),
 });
 
 

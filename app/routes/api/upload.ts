@@ -1,28 +1,59 @@
-import { env } from "cloudflare:workers";
 import { createFileRoute } from "@tanstack/react-router";
+import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/d1";
+import * as schema from "../../db/schema";
 import { uploads } from "../../db/schema";
-import { db } from "../../index";
+import { resolveCloudflareEnv, resolveWaitUntil } from "../../utils/cloudflare";
 import { processCsv } from "./-process";
 
 export const Route = createFileRoute("/api/upload")({
   server: {
     handlers: {
-      POST: async ({ request }) => {
+      POST: async ({ request, context }) => {
         try {
+          const errorResponse = (status: number, error: string, details?: string) =>
+            Response.json(
+              details ? { error, details } : { error },
+              { status }
+            );
+
+          const cloudflareEnv = resolveCloudflareEnv(context, request);
+
+          if (!cloudflareEnv) {
+            return errorResponse(
+              500,
+              "Upload failed",
+              "Cloudflare bindings are missing from request context"
+            );
+          }
+
+          const myBucket = cloudflareEnv.MY_BUCKET;
+          const d1Database = cloudflareEnv.DB;
+
+          if (!myBucket || !d1Database) {
+            return errorResponse(
+              500,
+              "Upload failed",
+              "Storage or database bindings are missing"
+            );
+          }
+
+          const db = drizzle(d1Database, { schema });
+
           const formData = await request.formData();
-          const file = formData.get("file") as File;
+          const file = formData.get("file") as File | null;
 
           if (!file) {
-            return Response.json({ error: "No file provided" }, { status: 400 });
+            return errorResponse(400, "No file provided");
           }
 
           if (!file.name.endsWith(".csv")) {
-            return Response.json({ error: "Only CSV files are supported" }, { status: 400 });
+            return errorResponse(400, "Only CSV files are supported");
           }
 
-          const r2Key = `csv-${Date.now()}-${file.name}`;
+          const r2Key = `${Date.now()}-${file.name}`;
 
-          await env.MY_BUCKET.put(r2Key, file.stream(), {
+          await myBucket.put(r2Key, file.stream(), {
             httpMetadata: { contentType: file.type || "text/csv" },
           });
 
@@ -35,12 +66,39 @@ export const Route = createFileRoute("/api/upload")({
             })
             .returning();
 
-          await processCsv(newUpload.id, r2Key);
+          const processing = processCsv(newUpload.id, r2Key, db, cloudflareEnv).catch(
+            (error) => {
+              console.error("Processing error:", error);
+            }
+          );
 
-          return Response.json({ id: newUpload.id }, { status: 200 });
-        } catch (err) {
+          const waitUntil = resolveWaitUntil(context, request);
+
+          if (waitUntil) {
+            waitUntil(processing);
+            return Response.json({ id: newUpload.id, status: "pending" }, { status: 200 });
+          }
+
+          await processing;
+
+          const [upload] = await db
+            .select({ status: uploads.status, progress: uploads.progress })
+            .from(uploads)
+            .where(eq(uploads.id, newUpload.id))
+            .limit(1);
+
+          return Response.json(
+            {
+              id: newUpload.id,
+              status: upload?.status ?? "processed",
+              progress: upload?.progress ?? 0,
+            },
+            { status: 200 }
+          );
+        } catch (err: unknown) {
+          const message = err instanceof Error ? err.message : "Unknown error";
           console.error("Upload error:", err);
-          return Response.json({ error: "Upload failed" }, { status: 500 });
+          return Response.json({ error: "Upload failed", details: message }, { status: 500 });
         }
       },
     },

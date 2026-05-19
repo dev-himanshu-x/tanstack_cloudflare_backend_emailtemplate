@@ -15,6 +15,20 @@
       "when": 1778268377272,
       "tag": "0001_greedy_shen",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1778837602038,
+      "tag": "0002_curious_moonstone",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1779172020335,
+      "tag": "0003_mighty_drax",
+      "breakpoints": true
     }
   ]
 }
